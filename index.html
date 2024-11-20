@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="ko">
+<!-- 이전 head 부분 스타일은 동일하게 유지 -->
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> 쿠폰 세상</title>
+    <style>
+        /* 이전 스타일 유지 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            border-bottom: 1px solid #eee;
+            background-color: white;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-align: center;
+            flex-grow: 1;
+        }
+
+        .nav-menu {
+            display: flex;
+            justify-content: space-around;
+            padding: 1rem;
+            background-color: white;
+            position: fixed;
+            top: 60px;
+            width: 100%;
+            border-bottom: 1px solid #eee;
+            z-index: 999;
+        }
+
+        .nav-button {
+            padding: 0.5rem 1rem;
+            border: none;
+            background: none;
+            color: #666;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .nav-button.active {
+            color: #FF6B6B;
+            font-weight: bold;
+        }
+
+        .main-content {
+            margin-top: 120px;
+            padding: 1rem;
+        }
+
+        .content-section {
+            display: none;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        .coupon-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+
+        .coupon-card {
+            border: 1px solid #eee;
+            border-radius: 8px;
+            padding: 1.5rem;
+            text-align: center;
+            background: white;
+        }
+
+        .form-container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 2rem;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-textarea {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            height: 150px;
+            resize: vertical;
+        }
+
+        .submit-button {
+            width: 100%;
+            padding: 1rem;
+            background-color: #FF6B6B;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .submit-button:hover {
+            background-color: #FF5252;
+        }
+
+        .section-title {
+            margin-bottom: 1.5rem;
+            color: #333;
+            font-size: 1.5rem;
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            .nav-menu {
+                flex-wrap: wrap;
+            }
+            
+            .nav-button {
+                font-size: 0.9rem;
+                padding: 0.4rem 0.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="logo"> 쿠폰 세상</div>
+        <button class="cart-btn">🛒</button>
+    </header>
+
+    <nav class="nav-menu">
+        <button class="nav-button active" data-section="home">홈</button>
+        <button class="nav-button" data-section="purchase">쿠폰매입</button>
+        <button class="nav-button" data-section="refund">환불신청</button>
+        <button class="nav-button" data-section="inquiry">문의</button>
+    </nav>
+
+    <main class="main-content">
+        <!-- 홈 섹션 -->
+        <section id="home" class="content-section active">
+            <div class="coupon-grid">
+                <div class="coupon-card">
+                    <h3>신규가입 특별 쿠폰</h3>
+                    <div class="coupon-value">10%</div>
+                    <p>첫 구매 시 사용 가능</p>
+                    <button class="submit-button">구매하기</button>
+                </div>
+                <div class="coupon-card">
+                    <h3>주말특가 쿠폰</h3>
+                    <div class="coupon-value">10%</div>
+                    <p>주말 한정 특별 할인</p>
+                    <button class="submit-button">구매하기</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- 쿠폰 매입 섹션 -->
+        <section id="purchase" class="content-section">
+            <div class="form-container">
+                <h2 class="section-title">쿠폰 매입 신청</h2>
+                <div class="form-group">
+                    <label class="form-label">쿠폰 번호</label>
+                    <input type="text" class="form-input" placeholder="쿠폰 번호를 입력하세요">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">매입 금액</label>
+                    <input type="number" class="form-input" placeholder="희망 매입 금액을 입력하세요">
+                </div>
+                <button class="submit-button">매입 신청</button>
+            </div>
+        </section>
+
+        <!-- 환불 신청 섹션 -->
+        <section id="refund" class="content-section">
+            <div class="form-container">
+                <h2 class="section-title">환불 신청</h2>
+                <div class="form-group">
+                    <label class="form-label"> 쿠폰발행번호</label>
+                    <input type="text" class="form-input" placeholder=" 쿠폰발행번호를 입력하세요">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">환불 사유</label>
+                    <select class="form-input">
+                        <option>환불 사유를 선택하세요</option>
+                        <option>단순 변심</option>
+                        <option>상품 불량</option>
+                        <option>배송 지연</option>
+                        <option>기타</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">상세 사유</label>
+                    <textarea class="form-textarea" placeholder="환불 사유를 자세히 적어주세요"></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">환불 계좌 정보</label>
+                    <input type="text" class="form-input" placeholder="예금주명">
+                    <input type="text" class="form-input" placeholder="은행명">
+                    <input type="text" class="form-input" placeholder="계좌번호">
+                </div>
+                <button class="submit-button">환불 신청</button>
+            </div>
+        </section>
+
+        <!-- 문의 섹션 -->
+        <section id="inquiry" class="content-section">
+            <div class="form-container">
+                <h2 class="section-title">문의하기</h2>
+                <div class="form-group">
+                    <label class="form-label">문의 유형</label>
+                    <select class="form-input">
+                        <option>문의 유형을 선택하세요</option>
+                        <option>쿠폰 사용</option>
+                        <option>주문/결제</option>
+                        <option>배송</option>
+                        <option>기타</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">이메일</label>
+                    <input type="email" class="form-input" placeholder="이메일 주소를 입력하세요">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">문의 내용</label>
+                    <textarea class="form-textarea" placeholder="문의하실 내용을 상세히 적어주세요"></textarea>
+                </div>
+                <button class="submit-button">문의하기</button>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const navButtons = document.querySelectorAll('.nav-button');
+            const sections = document.querySelectorAll('.content-section');
+
+            navButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    // 활성 버튼 스타일 변경
+                    navButtons.forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+
+                    // 섹션 전환
+                    const sectionId = this.dataset.section;
+                    sections.forEach(section => {
+                        section.classList.remove('active');
+                        if (section.id === sectionId) {
+                            section.classList.add('active');
+                        }
+                    });
+                });
+            });
+
+            // 폼 제출 처리
+            const submitButtons = document.querySelectorAll('.submit-button');
+            submitButtons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    alert('요청이 정상적으로 접수되었습니다.');
+                });
+            });
+        });
+    </script>
+</body>
+</html>
