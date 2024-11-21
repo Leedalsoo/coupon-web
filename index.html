@@ -1,302 +1,581 @@
 <!DOCTYPE html>
 <html lang="ko">
 <!-- 이전 head 부분 스타일은 동일하게 유지 -->
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title> 쿠폰 세상</title>
-    <style>
-        /* 이전 스타일 유지 */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=5.0, minimum-scale=1.0, user-scalable=yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <title> 쿠폰 세상</title>
+  <style>
+    /* 이전 스타일 유지 */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
 
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 1rem;
-            border-bottom: 1px solid #eee;
-            background-color: white;
-            position: fixed;
-            top: 0;
-            width: 100%;
-            z-index: 1000;
-        }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem;
+      border-bottom: 1px solid #eee;
+      background-color: white;
+      position: fixed;
+      top: 0;
+      width: 100%;
+      z-index: 1000;
+    }
 
-        .logo {
-            font-size: 1.5rem;
-            font-weight: bold;
-            text-align: center;
-            flex-grow: 1;
-        }
+    .logo {
+      font-size: 1.5rem;
+      font-weight: bold;
+      text-align: center;
+      flex-grow: 1;
+    }
 
-        .nav-menu {
-            display: flex;
-            justify-content: space-around;
-            padding: 1rem;
-            background-color: white;
-            position: fixed;
-            top: 60px;
-            width: 100%;
-            border-bottom: 1px solid #eee;
-            z-index: 999;
-        }
+    .nav-menu {
+      display: flex;
+      justify-content: space-around;
+      padding: 1rem;
+      background-color: white;
+      position: fixed;
+      top: 60px;
+      width: 100%;
+      border-bottom: 1px solid #eee;
+      z-index: 999;
+    }
 
-        .nav-button {
-            padding: 0.5rem 1rem;
-            border: none;
-            background: none;
-            color: #666;
-            cursor: pointer;
-            transition: color 0.3s;
-        }
+    .nav-button {
+      padding: 0.5rem 1rem;
+      border: none;
+      background: none;
+      color: #666;
+      cursor: pointer;
+      transition: color 0.3s;
+    }
 
-        .nav-button.active {
-            color: #FF6B6B;
-            font-weight: bold;
-        }
+    .nav-button.active {
+      color: #FF6B6B;
+      font-weight: bold;
+    }
 
-        .main-content {
-            margin-top: 120px;
-            padding: 1rem;
-        }
+    .main-content {
+      margin-top: 120px;
+      padding: 1rem;
+    }
 
-        .content-section {
-            display: none;
-        }
+    .content-section {
+      display: none;
+    }
 
-        .content-section.active {
-            display: block;
-        }
+    .content-section.active {
+      display: block;
+    }
 
-        .coupon-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1rem;
-        }
+    .coupon-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1rem;
+    }
 
-        .coupon-card {
-            border: 1px solid #eee;
-            border-radius: 8px;
-            padding: 1.5rem;
-            text-align: center;
-            background: white;
-        }
+    .coupon-card {
+      border: 1px solid #eee;
+      border-radius: 8px;
+      padding: 1.5rem;
+      text-align: center;
+      background: white;
+    }
 
-        .form-container {
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 2rem;
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
+    .form-container {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+    }
 
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
+    .form-group {
+      margin-bottom: 15px;
+    }
 
-        .form-label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: bold;
-            color: #333;
-        }
+    .form-label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
 
-        .form-input {
-            width: 100%;
-            padding: 0.8rem;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            margin-bottom: 0.5rem;
-        }
+    .form-input {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
 
-        .form-textarea {
-            width: 100%;
-            padding: 0.8rem;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            height: 150px;
-            resize: vertical;
-        }
+    .submit-btn.warm {
+      width: 100%;
+      padding: 12px;
+      background-color: #FF6B6B;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      margin-top: 20px;
+    }
 
-        .submit-button {
-            width: 100%;
-            padding: 1rem;
-            background-color: #FF6B6B;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
+    .submit-btn.warm:hover {
+      background-color: #FF5252;
+    }
 
-        .submit-button:hover {
-            background-color: #FF5252;
-        }
+    .submit-btn.warm:active {
+      transform: scale(0.98);
+    }
 
-        .section-title {
-            margin-bottom: 1.5rem;
-            color: #333;
-            font-size: 1.5rem;
-            text-align: center;
-        }
+    .submit-btn.warm:disabled {
+      background-color: #ffb3b3;
+      cursor: not-allowed;
+    }
 
-        @media (max-width: 768px) {
-            .nav-menu {
-                flex-wrap: wrap;
-            }
-            
-            .nav-button {
-                font-size: 0.9rem;
-                padding: 0.4rem 0.8rem;
-            }
-        }
-    </style>
+    .section-title {
+      margin-bottom: 1.5rem;
+      color: #333;
+      font-size: 1.5rem;
+      text-align: center;
+    }
+
+    @media (max-width: 768px) {
+      .nav-menu {
+        flex-wrap: wrap;
+      }
+
+      .nav-button {
+        font-size: 0.9rem;
+        padding: 0.4rem 0.8rem;
+      }
+    }
+
+    /* 구매하기 버튼 스타일 추가 */
+    .coupon-card .submit-btn.warm {
+      display: inline-block;
+      text-decoration: none;
+      text-align: center;
+      margin-top: 15px;
+      width: 80%;
+      /* 카드 내에서는 약간 더 좁게 설정 */
+    }
+
+    /* 모바일 최적화 기본 설정 */
+    * {
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+    }
+
+    /* 터치 디바이스 최적화 */
+    @media (hover: none) and (pointer: coarse) {
+
+      .nav-button,
+      .submit-btn.warm {
+        min-height: 44px;
+        /* 터치 영역 최소 크기 확보 */
+        padding: 12px 20px;
+      }
+
+      .form-input,
+      select.form-input {
+        min-height: 44px;
+        font-size: 16px;
+        /* iOS에서 자동 확대 방지 */
+      }
+    }
+
+    /* 반응형 그리드 시스템 */
+    .coupon-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      padding: 1rem;
+    }
+
+    /* 모바일 화면 최적화 */
+    @media (max-width: 480px) {
+      .header {
+        padding: 0.8rem;
+      }
+
+      .logo {
+        font-size: 1.2rem;
+      }
+
+      .nav-menu {
+        padding: 0.8rem 0.4rem;
+        flex-wrap: wrap;
+        justify-content: space-between;
+      }
+
+      .nav-button {
+        font-size: 0.9rem;
+        padding: 0.5rem;
+        flex: 1 1 auto;
+        margin: 0.2rem;
+      }
+
+      .form-container {
+        padding: 15px;
+      }
+
+      .section-title {
+        font-size: 1.3rem;
+      }
+
+      .form-label {
+        font-size: 0.9rem;
+      }
+    }
+
+    /* 태블릿 화면 최적화 */
+    @media (min-width: 481px) and (max-width: 768px) {
+      .form-container {
+        max-width: 90%;
+      }
+
+      .coupon-grid {
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      }
+    }
+
+    /* 큰 화면 최적화 */
+    @media (min-width: 1024px) {
+      .form-container {
+        max-width: 800px;
+      }
+
+      .coupon-grid {
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+    }
+
+    /* 터치 인터랙션 개선 */
+    .submit-btn.warm {
+      transition: transform 0.2s ease, background-color 0.3s ease;
+    }
+
+    .submit-btn.warm:active {
+      transform: scale(0.98);
+    }
+
+    /* 스크롤 부드럽게 */
+    html {
+      scroll-behavior: smooth;
+    }
+
+    /* 폼 입력 필드 터치 최적화 */
+    .form-input:focus {
+      outline: none;
+      border-color: #FF6B6B;
+      box-shadow: 0 0 0 2px rgba(255, 107, 107, 0.2);
+    }
+
+    /* 터치 스크린용 스크롤 최적화 */
+    .main-content {
+      -webkit-overflow-scrolling: touch;
+      overflow-y: auto;
+    }
+  </style>
 </head>
+
 <body>
-    <header class="header">
-        <div class="logo"> 쿠폰 세상</div>
-        <button class="cart-btn">🛒</button>
-    </header>
+  <header class="header">
+    <div class="logo"> 쿠폰 세상</div>
+    <button class="cart-btn">🛒</button>
+  </header>
 
-    <nav class="nav-menu">
-        <button class="nav-button active" data-section="home">홈</button>
-        <button class="nav-button" data-section="purchase">쿠폰매입</button>
-        <button class="nav-button" data-section="refund">환불신청</button>
-        <button class="nav-button" data-section="inquiry">문의</button>
-    </nav>
+  <nav class="nav-menu">
+    <button class="nav-button active" data-section="home">홈</button>
+    <button class="nav-button" data-section="use">쿠폰사용</button>
+    <button class="nav-button" data-section="refund">환불신청</button>
+    <button class="nav-button" data-section="inquiry">문의</button>
+  </nav>
 
-    <main class="main-content">
-        <!-- 홈 섹션 -->
-        <section id="home" class="content-section active">
-            <div class="coupon-grid">
-                <div class="coupon-card">
-                    <h3>신규가입 특별 쿠폰</h3>
-                    <div class="coupon-value">10%</div>
-                    <p>첫 구매 시 사용 가능</p>
-                    <button class="submit-button">구매하기</button>
-                </div>
-                <div class="coupon-card">
-                    <h3>주말특가 쿠폰</h3>
-                    <div class="coupon-value">10%</div>
-                    <p>주말 한정 특별 할인</p>
-                    <button class="submit-button">구매하기</button>
-                </div>
-            </div>
-        </section>
+  <main class="main-content">
+    <!-- 홈 섹션 -->
+    <section id="home" class="content-section active">
+      <div class="coupon-grid">
+        <div class="coupon-card">
+          <h3>신규가입 특별 쿠폰</h3>
+          <div class="coupon-value">10%</div>
+          <p>첫 구매 시 사용 가능</p>
+          <a href="https://m.gfriendscp.com" class="submit-btn warm" target="_blank">구매하기</a>
+        </div>
+        <div class="coupon-card">
+          <h3>주말특가 쿠폰</h3>
+          <div class="coupon-value">10%</div>
+          <p>주말 한정 특별 할인</p>
+          <a href="https://m.gfriendscp.com" class="submit-btn warm" target="_blank">구매하기</a>
+        </div>
+      </div>
+    </section>
 
-        <!-- 쿠폰 매입 섹션 -->
-        <section id="purchase" class="content-section">
-            <div class="form-container">
-                <h2 class="section-title">쿠폰 매입 신청</h2>
-                <div class="form-group">
-                    <label class="form-label">쿠폰 번호</label>
-                    <input type="text" class="form-input" placeholder="쿠폰 번호를 입력하세요">
-                </div>
-                <div class="form-group">
-                    <label class="form-label">매입 금액</label>
-                    <input type="number" class="form-input" placeholder="희망 매입 금액을 입력하세요">
-                </div>
-                <button class="submit-button">매입 신청</button>
-            </div>
-        </section>
+    <!-- 쿠폰 사용 섹션 -->
+    <section id="use" class="content-section">
+      <div class="form-container">
+        <h2 class="section-title">쿠폰 사용 신청</h2>
+        <form id="useForm">
+          <div class="form-group">
+            <label class="form-label">쿠폰번호</label>
+            <input type="text" name="coupon_number" class="form-input" required placeholder="쿠폰번호를 입력해주세요">
+          </div>
 
-        <!-- 환불 신청 섹션 -->
-        <section id="refund" class="content-section">
-            <div class="form-container">
-                <h2 class="section-title">환불 신청</h2>
-                <div class="form-group">
-                    <label class="form-label"> 쿠폰발행번호</label>
-                    <input type="text" class="form-input" placeholder=" 쿠폰발행번호를 입력하세요">
-                </div>
-                <div class="form-group">
-                    <label class="form-label">환불 사유</label>
-                    <select class="form-input">
-                        <option>환불 사유를 선택하세요</option>
-                        <option>단순 변심</option>
-                        <option>상품 불량</option>
-                        <option>배송 지연</option>
-                        <option>기타</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">상세 사유</label>
-                    <textarea class="form-textarea" placeholder="환불 사유를 자세히 적어주세요"></textarea>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">환불 계좌 정보</label>
-                    <input type="text" class="form-input" placeholder="예금주명">
-                    <input type="text" class="form-input" placeholder="은행명">
-                    <input type="text" class="form-input" placeholder="계좌번호">
-                </div>
-                <button class="submit-button">환불 신청</button>
-            </div>
-        </section>
+          <div class="form-group">
+            <label class="form-label">사용금액</label>
+            <input type="number" name="use_amount" class="form-input" required placeholder="사용하실 금액을 입력해주세요">
+          </div>
 
-        <!-- 문의 섹션 -->
-        <section id="inquiry" class="content-section">
-            <div class="form-container">
-                <h2 class="section-title">문의하기</h2>
-                <div class="form-group">
-                    <label class="form-label">문의 유형</label>
-                    <select class="form-input">
-                        <option>문의 유형을 선택하세요</option>
-                        <option>쿠폰 사용</option>
-                        <option>주문/결제</option>
-                        <option>배송</option>
-                        <option>기타</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">이메일</label>
-                    <input type="email" class="form-input" placeholder="이메일 주소를 입력하세요">
-                </div>
-                <div class="form-group">
-                    <label class="form-label">문의 내용</label>
-                    <textarea class="form-textarea" placeholder="문의하실 내용을 상세히 적어주세요"></textarea>
-                </div>
-                <button class="submit-button">문의하기</button>
-            </div>
-        </section>
-    </main>
+          <button type="submit" class="submit-btn warm">사용 신청하기</button>
+        </form>
+      </div>
+    </section>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const navButtons = document.querySelectorAll('.nav-button');
-            const sections = document.querySelectorAll('.content-section');
+    <!-- 환불 신청 섹션 -->
+    <section id="refund" class="content-section">
+      <form id="refundForm" class="form-container">
+        <h2 class="section-title">환불 신청</h2>
+        <div class="form-group">
+          <label class="form-label">신청인</label>
+          <input type="text" name="applicant_name" class="form-input" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">이메일</label>
+          <input type="email" name="email" class="form-input" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">쿠폰발행번호</label>
+          <input type="text" name="coupon_number" class="form-input" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">환불사유</label>
+          <select name="refund_reason" class="form-input" required>
+            <option value="">선택해주세요</option>
+            <option value="단순변심">단순변심</option>
+            <option value="상품불만족">상품불만족</option>
+            <option value="구매착오">구매착오</option>
+            <option value="기타">기타</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">상세사유</label>
+          <textarea name="refund_detail" class="form-input" rows="4"></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">예금주명</label>
+          <input type="text" name="account_holder" class="form-input" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">은행명</label>
+          <select name="bank_name" class="form-input" required>
+            <option value="">선택해주세요</option>
+            <option value="KB국민은행">KB국민은행</option>
+            <option value="신한은행">신한은행</option>
+            <option value="우리은행">우리은행</option>
+            <option value="하나은행">하나은행</option>
+            <option value="NH농협은행">NH농협은행</option>
+            <option value="IBK기업은행">IBK기업은행</option>
+            <option value="SC제일은행">SC제일은행</option>
+            <option value="씨티은행">씨티은행</option>
+            <option value="카카오뱅크">카카오뱅크</option>
+            <option value="토스뱅크">토스뱅크</option>
+            <option value="케이뱅크">케이뱅크</option>
+            <option value="우체국">우체국</option>
+            <option value="새마을금고">새마을금고</option>
+            <option value="신협">신협</option>
+            <option value="수협은행">수협은행</option>
+            <option value="산업은행">산업은행</option>
+            <option value="대구은행">대구은행</option>
+            <option value="부산은행">부산은행</option>
+            <option value="경남은행">경남은행</option>
+            <option value="광주은행">광주은행</option>
+            <option value="전북은행">전북은행</option>
+            <option value="제주은행">제주은행</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">계좌번호</label>
+          <input type="text" name="account_number" class="form-input" required placeholder="'-' 없이 숫자만 입력해주세요">
+        </div>
+        <button type="submit" class="submit-btn warm">환불 신청하기</button>
+      </form>
+    </section>
 
-            navButtons.forEach(button => {
-                button.addEventListener('click', function() {
-                    // 활성 버튼 스타일 변경
-                    navButtons.forEach(btn => btn.classList.remove('active'));
-                    this.classList.add('active');
+    <!-- 문의 섹션 -->
+    <section id="inquiry" class="content-section">
+      <div class="form-container">
+        <h2 class="section-title">문의하기</h2>
+        <div class="form-group">
+          <label class="form-label">문의 유형</label>
+          <select class="form-input">
+            <option>문의 유형을 선택하세요</option>
+            <option>쿠폰 사용</option>
+            <option>주문/결제</option>
+            <option>배송</option>
+            <option>기타</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">이메일</label>
+          <input type="email" class="form-input" placeholder="이메일 주소를 입력하세요">
+        </div>
+        <div class="form-group">
+          <label class="form-label">문의 내용</label>
+          <textarea class="form-input" rows="5" placeholder="문의하실 내용을 상세히 적어주세요"></textarea>
+        </div>
+        <button type="submit" class="submit-btn warm">문의하기</button>
+      </div>
+    </section>
+  </main>
 
-                    // 섹션 전환
-                    const sectionId = this.dataset.section;
-                    sections.forEach(section => {
-                        section.classList.remove('active');
-                        if (section.id === sectionId) {
-                            section.classList.add('active');
-                        }
-                    });
-                });
-            });
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const navButtons = document.querySelectorAll('.nav-button');
+      const sections = document.querySelectorAll('.content-section');
 
-            // 폼 제출 처리
-            const submitButtons = document.querySelectorAll('.submit-button');
-            submitButtons.forEach(button => {
-                button.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    alert('요청이 정상적으로 접수되었습니다.');
-                });
-            });
+      navButtons.forEach(button => {
+        button.addEventListener('click', function () {
+          // 활성 버튼 스타일 변경
+          navButtons.forEach(btn => btn.classList.remove('active'));
+          this.classList.add('active');
+
+          // 섹션 전환
+          const sectionId = this.dataset.section;
+          sections.forEach(section => {
+            section.classList.remove('active');
+            if (section.id === sectionId) {
+              section.classList.add('active');
+            }
+          });
         });
-    </script>
+      });
+
+      // 폼 제출 처리
+      const submitButtons = document.querySelectorAll('.submit-button');
+      submitButtons.forEach(button => {
+        button.addEventListener('click', function (e) {
+          e.preventDefault();
+          alert('요청이 정상적으로 접수되었습니다.');
+        });
+      });
+    });
+
+    $(document).ready(function () {
+      $('#refundForm').on('submit', function (e) {
+        e.preventDefault();
+
+        const formData = {
+          applicant_name: $('input[name="applicant_name"]').val(),
+          email: $('input[name="email"]').val(),
+          coupon_number: $('input[name="coupon_number"]').val()
+        };
+
+        $.ajax({
+          url: '/api/refund-requests',
+          method: 'POST',
+          data: formData,
+          success: function (response) {
+            alert('환불 신청이 접수되었습니다.');
+            $('#refundForm')[0].reset();
+          },
+          error: function () {
+            alert('환불 신청 처리 중 오류가 발생했습니다.');
+          }
+        });
+      });
+    });
+
+    // 터치 이벤트 처리
+    let touchStartX = 0;
+    let touchEndX = 0;
+
+    document.addEventListener('touchstart', e => {
+      touchStartX = e.changedTouches[0].screenX;
+    }, false);
+
+    document.addEventListener('touchend', e => {
+      touchEndX = e.changedTouches[0].screenX;
+      handleSwipe();
+    }, false);
+
+    function handleSwipe() {
+      const SWIPE_THRESHOLD = 50;
+      const sections = ['home', 'use', 'refund', 'inquiry'];
+
+      if (Math.abs(touchEndX - touchStartX) > SWIPE_THRESHOLD) {
+        const currentSection = document.querySelector('.content-section.active').id;
+        const currentIndex = sections.indexOf(currentSection);
+
+        if (touchEndX < touchStartX && currentIndex < sections.length - 1) {
+          // 왼쪽으로 스와이프
+          document.querySelector(`[data-section="${sections[currentIndex + 1]}"]`).click();
+        } else if (touchEndX > touchStartX && currentIndex > 0) {
+          // 오른쪽으로 스와이프
+          document.querySelector(`[data-section="${sections[currentIndex - 1]}"]`).click();
+        }
+      }
+    }
+
+    // 핀치 줌 제어
+    document.addEventListener('gesturestart', function (e) {
+      e.preventDefault();
+    });
+
+    // 더블탭 줌 방지하면서 접근성 유지
+    let lastTap = 0;
+    document.addEventListener('touchend', function (e) {
+      const currentTime = new Date().getTime();
+      const tapLength = currentTime - lastTap;
+      if (tapLength < 500 && tapLength > 0) {
+        e.preventDefault();
+      }
+      lastTap = currentTime;
+    });
+
+    document.getElementById('refundForm').addEventListener('submit', async function (e) {
+      e.preventDefault();
+
+      const formData = {
+        applicant_name: this.applicant_name.value,
+        email: this.email.value,
+        coupon_number: this.coupon_number.value,
+        refund_reason: this.refund_reason.value,
+        refund_detail: this.refund_detail.value,
+        account_holder: this.account_holder.value,
+        bank_name: this.bank_name.value,
+        account_number: this.account_number.value
+      };
+
+      try {
+        const response = await fetch('/api/refund/request', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(formData)
+        });
+
+        if (response.ok) {
+          alert('환불 신청이 접수되었습니다.');
+          this.reset();
+        } else {
+          alert('환불 신청 처리 중 오류가 발생했습니다.');
+        }
+      } catch (error) {
+        alert('서버 연결 중 오류가 발생했습니다.');
+      }
+    });
+  </script>
 </body>
+
 </html>
