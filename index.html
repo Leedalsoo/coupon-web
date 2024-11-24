@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="ko">
+<!-- 이전 head 부분 스타일은 동일하게 유지 -->
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title> 쿠폰 세상</title>
+  <style>
+    /* 이전 스타일 유지 */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem;
+      border-bottom: 1px solid #eee;
+      background-color: white;
+      position: fixed;
+      top: 0;
+      width: 100%;
+      z-index: 1000;
+    }
+
+    .logo {
+      font-size: 1.5rem;
+      font-weight: bold;
+      text-align: center;
+      flex-grow: 1;
+    }
+
+    .nav-menu {
+      display: flex;
+      justify-content: space-around;
+      padding: 1rem;
+      background-color: white;
+      position: fixed;
+      top: 60px;
+      width: 100%;
+      border-bottom: 1px solid #eee;
+      z-index: 999;
+    }
+
+    .nav-button {
+      padding: 0.5rem 1rem;
+      border: none;
+      background: none;
+      color: #666;
+      cursor: pointer;
+      transition: color 0.3s;
+    }
+
+    .nav-button.active {
+      color: #FF6B6B;
+      font-weight: bold;
+    }
+
+    .main-content {
+      margin-top: 120px;
+      padding: 1rem;
+    }
+
+    .content-section {
+      display: none;
+    }
+
+    .content-section.active {
+      display: block;
+    }
+
+    .coupon-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1rem;
+    }
+
+    .coupon-card {
+      border: 1px solid #eee;
+      border-radius: 8px;
+      padding: 1.5rem;
+      text-align: center;
+      background: white;
+    }
+
+    .form-container {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 2rem;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: bold;
+      color: #333;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 0.8rem;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      margin-bottom: 0.5rem;
+    }
+
+    .form-textarea {
+      width: 100%;
+      padding: 0.8rem;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      height: 150px;
+      resize: vertical;
+    }
+
+    .submit-button {
+      width: 100%;
+      padding: 1rem;
+      background-color: #FF6B6B;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .submit-button:hover {
+      background-color: #FF5252;
+    }
+
+    .section-title {
+      margin-bottom: 1.5rem;
+      color: #333;
+      font-size: 1.5rem;
+      text-align: center;
+    }
+
+    @media (max-width: 768px) {
+      .nav-menu {
+        flex-wrap: wrap;
+      }
+
+      .nav-button {
+        font-size: 0.9rem;
+        padding: 0.4rem 0.8rem;
+      }
+    }
+
+    /* 구매하기 버튼 스타일 추가 */
+    .coupon-card .submit-btn.warm {
+      display: inline-block;
+      text-decoration: none;
+      text-align: center;
+      margin-top: 15px;
+      width: 80%;
+      background-color: #FF6B6B;
+      color: white;
+      padding: 1rem;
+      border-radius: 4px;
+      font-size: 1rem;
+      transition: background-color 0.3s;
+    }
+
+    .coupon-card .submit-btn.warm:hover {
+      background-color: #FF5252;
+    }
+
+    /* 모바일 최적화 기본 설정 */
+    * {
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+    }
+
+    /* 터치 디바이스 최적화 */
+    @media (hover: none) and (pointer: coarse) {
+
+      .nav-button,
+      .submit-btn.warm {
+        min-height: 44px;
+        /* 터치 영역 최소 크기 확보 */
+        padding: 12px 20px;
+      }
+
+      .form-input,
+      select.form-input {
+        min-height: 44px;
+        font-size: 16px;
+        /* iOS에서 자동 확대 방지 */
+      }
+    }
+
+    /* 반응형 그리드 시스템 */
+    .coupon-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      padding: 1rem;
+    }
+
+    /* 모바일 화면 최적화 */
+    @media (max-width: 480px) {
+      .header {
+        padding: 0.8rem;
+      }
+
+      .logo {
+        font-size: 1.2rem;
+      }
+
+      .nav-menu {
+        padding: 0.8rem 0.4rem;
+        flex-wrap: wrap;
+        justify-content: space-between;
+      }
+
+      .nav-button {
+        font-size: 0.9rem;
+        padding: 0.5rem;
+        flex: 1 1 auto;
+        margin: 0.2rem;
+      }
+
+      .form-container {
+        padding: 15px;
+      }
+
+      .section-title {
+        font-size: 1.3rem;
+      }
+
+      .form-label {
+        font-size: 0.9rem;
+      }
+    }
+
+    /* 태블릿 화면 최적화 */
+    @media (min-width: 481px) and (max-width: 768px) {
+      .form-container {
+        max-width: 90%;
+      }
+
+      .coupon-grid {
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      }
+    }
+
+    /* 큰 화면 최적화 */
+    @media (min-width: 1024px) {
+      .form-container {
+        max-width: 800px;
+      }
+
+      .coupon-grid {
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+    }
+
+    /* 터치 인터랙션 개선 */
+    .submit-btn.warm {
+      transition: transform 0.2s ease, background-color 0.3s ease;
+    }
+
+    .submit-btn.warm:active {
+      transform: scale(0.98);
+    }
+
+    /* 스크롤 부드럽게 */
+    html {
+      scroll-behavior: smooth;
+    }
+
+    /* 폼 입력 필드 터치 최적화 */
+    .form-input:focus {
+      outline: none;
+      border-color: #FF6B6B;
+      box-shadow: 0 0 0 2px rgba(255, 107, 107, 0.2);
+    }
+
+    /* 터치 스크린용 스크롤 최적화 */
+    .main-content {
+      -webkit-overflow-scrolling: touch;
+      overflow-y: auto;
+    }
+
+    .required {
+      color: #FF6B6B;
+      margin-left: 4px;
+    }
+
+    .form-input:invalid {
+      border-color: #FF6B6B;
+    }
+
+    .form-input:valid {
+      border-color: #4CAF50;
+    }
+
+    .bank-selection-wrapper {
+      position: relative;
+      margin-bottom: 10px;
+    }
+
+    #directBankInput {
+      margin-top: 10px;
+    }
+
+    optgroup {
+      font-weight: bold;
+      color: #666;
+    }
+
+    optgroup option {
+      font-weight: normal;
+      padding-left: 15px;
+    }
+
+    /* 터치 인터랙션 최적화 */
+    .main-content {
+      -webkit-overflow-scrolling: touch;
+      overflow-y: auto;
+      touch-action: pan-y pinch-zoom;
+    }
+
+    .coupon-card {
+      touch-action: pan-x pan-y;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    /* 드래그 스크롤을 위한 스타일 */
+    .coupon-grid {
+      scroll-snap-type: x mandatory;
+      overflow-x: auto;
+      overflow-y: hidden;
+      display: flex;
+      gap: 1rem;
+      padding: 1rem;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .coupon-card {
+      scroll-snap-align: start;
+      flex: 0 0 280px;
+      /* 기존 스타일 유지 */
+    }
+
+    /* 터치 피드백 효과 */
+    .nav-button:active,
+    .submit-button:active,
+    .coupon-card:active {
+      transform: scale(0.98);
+    }
+
+    /* 터치 하이라이트 제거 */
+    * {
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    /* 터치 인터랙션 스타일 추가/수정 */
+    * {
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+    }
+
+    .main-content {
+      -webkit-overflow-scrolling: touch;
+      overflow-y: auto;
+    }
+
+    .coupon-grid {
+      display: flex;
+      overflow-x: auto;
+      overflow-y: hidden;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+      padding: 1rem;
+      gap: 1rem;
+    }
+
+    .coupon-card {
+      flex: 0 0 280px;
+      scroll-snap-align: start;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    /* 터치 피드백 */
+    .nav-button:active,
+    .submit-button:active {
+      opacity: 0.7;
+      transform: scale(0.98);
+    }
+
+    /* 모바일 최적화 */
+    @media (max-width: 768px) {
+
+      .nav-button,
+      .submit-button {
+        min-height: 44px;
+        padding: 12px 20px;
+      }
+
+      .form-input,
+      .form-textarea {
+        font-size: 16px;
+        /* iOS에서 자동 줌 방지 */
+      }
+    }
+  </style>
+  <!-- Firebase SDK 추가 (head 태그 안에) -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+</head>
+
+<body>
+  <header class="header">
+    <div class="logo"> Coupon World</div>
+    <button class="cart-btn">🛒</button>
+  </header>
+
+  <nav class="nav-menu">
+    <button class="nav-button active" data-section="home">홈</button>
+    <button class="nav-button" data-section="purchase">쿠폰사용</button>
+    <button class="nav-button" data-section="refund">환불신청</button>
+    <button class="nav-button" data-section="inquiry">문의</button>
+  </nav>
+
+  <main class="main-content">
+    <!-- 홈 섹션 -->
+    <section id="home" class="content-section active">
+      <div class="coupon-grid">
+        <div class="coupon-card">
+          <h3>신규가입 특별 쿠폰</h3>
+          <div class="coupon-value">10%</div>
+          <p>첫 구매 시 사용 가능</p>
+          <a href="https://m.gfriendscp.com" class="submit-btn warm" target="_blank">구매하기</a>
+        </div>
+        <div class="coupon-card">
+          <h3>주말특가 쿠폰</h3>
+          <div class="coupon-value">10%</div>
+          <p>주말 한정 특별 할인</p>
+          <a href="https://m.gfriendscp.com" class="submit-btn warm" target="_blank">구하기</a>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- 쿠폰 사용 섹션 -->
+    <section id="purchase" class="content-section">
+      <div class="form-container">
+        <h2 class="section-title">쿠폰 사용 신청</h2>
+        <form id="couponForm">
+          <div class="form-group">
+            <label class="form-label">신청인 <span class="required">*</span></label>
+            <input type="text" class="form-input" name="userName" required placeholder="신청인의 이름을 입력하세요">
+          </div>
+          <div class="form-group">
+            <label class="form-label">전화번호 <span class="required">*</span></label>
+            <input type="tel" class="form-input" name="userPhone" required pattern="[0-9]{10,11}"
+              placeholder="전화번호를 입력하세요 (-제외)">
+          </div>
+          <div class="form-group">
+            <label class="form-label">쿠폰 번호 <span class="required">*</span></label>
+            <input type="text" class="form-input" name="couponNumber" required pattern="[0-9]{8}"
+              placeholder="8자리 쿠폰 번호를 입력하세요">
+          </div>
+          <div class="form-group">
+            <label class="form-label">사용 금액 <span class="required">*</span></label>
+            <input type="number" class="form-input" name="amount" required min="1000" placeholder="희망 사용 금액을 입력하세요">
+          </div>
+          <button type="submit" class="submit-button">사용 신청하기</button>
+        </form>
+      </div>
+    </section>
+
+    <!-- 환불 신청 섹션 -->
+    <section id="refund" class="content-section">
+      <div class="form-container">
+        <h2 class="section-title">환불 신청</h2>
+        <form id="refundForm">
+          <div class="form-group">
+            <label class="form-label">신청인 <span class="required">*</span></label>
+            <input type="text" class="form-input" name="refundName" required placeholder="신청인의 이름을 입력하세요">
+          </div>
+          <div class="form-group">
+            <label class="form-label">이메일 <span class="required">*</span></label>
+            <input type="email" class="form-input" name="refundEmail" required placeholder="이메일을 입력하세요">
+          </div>
+          <div class="form-group">
+            <label class="form-label">전화번호 <span class="required">*</span></label>
+            <input type="tel" class="form-input" name="refundPhone" required pattern="[0-9]{10,11}"
+              placeholder="전화번호를 입력하세요 (-제외)">
+          </div>
+          <div class="form-group">
+            <label class="form-label">신용카드승인번호 <span class="required">*</span></label>
+            <input type="text" class="form-input" name="cardApproval" required placeholder="신용카드승인번호를 입력하세요">
+          </div>
+          <div class="form-group">
+            <label class="form-label">환불 계좌 정보 <span class="required">*</span></label>
+            <input type="text" class="form-input" name="accountHolder" required placeholder="예금주명">
+            <div class="bank-selection-wrapper">
+              <select class="form-input" name="bankName" id="bankSelect" required>
+                <option value="">은행을 선택하세요</option>
+                <optgroup label="주요 은행">
+                  <option value="KB">KB국민은행</option>
+                  <option value="shinhan">신한은행</option>
+                  <option value="woori">우리은행</option>
+                  <option value="hana">하나은행</option>
+                  <option value="nh">농협은행</option>
+                  <option value="ibk">기업은행</option>
+                </optgroup>
+                <optgroup label="인터넷전문은행">
+                  <option value="kakao">카카오뱅크</option>
+                  <option value="toss">토스뱅크</option>
+                  <option value="kbank">케이뱅크</option>
+                </optgroup>
+                <optgroup label="기타 은행">
+                  <option value="sc">SC제일은행</option>
+                  <option value="city">씨티은행</option>
+                  <option value="dgb">대구은행</option>
+                  <option value="bnk">부산은행</option>
+                  <option value="kjb">광주은행</option>
+                  <option value="jbb">전북은행</option>
+                  <option value="knb">경남은행</option>
+                  <option value="kdb">산업은행</option>
+                  <option value="post">우체국</option>
+                </optgroup>
+                <option value="direct">직접입력</option>
+              </select>
+              <input type="text" class="form-input" id="directBankInput" name="directBankName" placeholder="은행명을 입력하세요"
+                style="display: none;">
+            </div>
+
+            <input type="text" class="form-input" name="accountNumber" required placeholder="계좌번호">
+          </div>
+          <button type="submit" class="submit-button">환불 신청하기</button>
+        </form>
+      </div>
+    </section>
+
+    <!-- 문의 섹션 -->
+    <section id="inquiry" class="content-section">
+      <div class="form-container">
+        <h2 class="section-title">문의하기</h2>
+        <div class="form-group">
+          <label class="form-label">문의 유형</label>
+          <select class="form-input">
+            <option>문의 유형을 선택하세요</option>
+            <option>쿠폰 사용</option>
+            <option>주문/결제</option>
+            <option>배송</option>
+            <option>기타</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">이메일</label>
+          <input type="email" class="form-input" placeholder="이메일 주소를 입력하세요">
+        </div>
+        <div class="form-group">
+          <label class="form-label">문의 내용</label>
+          <textarea class="form-textarea" placeholder="문의하실 내용을 상세히 적어주세요"></textarea>
+        </div>
+        <button class="submit-button">문의하기</button>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const navButtons = document.querySelectorAll('.nav-button');
+      const sections = document.querySelectorAll('.content-section');
+
+      navButtons.forEach(button => {
+        button.addEventListener('click', function () {
+          // 활 버튼 스타일 변경
+          navButtons.forEach(btn => btn.classList.remove('active'));
+          this.classList.add('active');
+
+          // 섹션 전환
+          const sectionId = this.dataset.section;
+          sections.forEach(section => {
+            section.classList.remove('active');
+            if (section.id === sectionId) {
+              section.classList.add('active');
+            }
+          });
+        });
+      });
+
+      // 쿠폰 사용 신청 폼 처리
+      const couponForm = document.getElementById('couponForm');
+      if (couponForm) {
+        couponForm.addEventListener('submit', async function (e) {
+          e.preventDefault();
+          if (this.checkValidity()) {
+            const formData = {
+              id: Date.now(),
+              userName: this.elements.userName.value,
+              userPhone: this.elements.userPhone.value,
+              couponNumber: this.elements.couponNumber.value,
+              amount: parseInt(this.elements.amount.value),
+              timestamp: new Date().toISOString(),
+              status: 'pending'
+            };
+
+            try {
+              await db.ref('applications/coupon').push(formData);
+              alert('정상적으로 신청되었습니다.');
+              this.reset();
+            } catch (error) {
+              alert('신청 중 오류가 발생했습니다.');
+              console.error(error);
+            }
+          }
+        });
+      }
+
+      // 환불 신청 폼 처리
+      const refundForm = document.getElementById('refundForm');
+      if (refundForm) {
+        refundForm.addEventListener('submit', async function (e) {
+          e.preventDefault();
+          if (this.checkValidity()) {
+            const formData = {
+              id: Date.now(),
+              refundName: this.elements.refundName.value,
+              refundEmail: this.elements.refundEmail.value,
+              refundPhone: this.elements.refundPhone.value,
+              cardApproval: this.elements.cardApproval.value,
+              bankName: this.elements.bankName.value,
+              accountNumber: this.elements.accountNumber.value,
+              timestamp: new Date().toISOString(),
+              status: 'pending'
+            };
+
+            try {
+              await db.ref('applications/refund').push(formData);
+              alert('정상적으로 환불 신청이 접수되었습니다.');
+              this.reset();
+            } catch (error) {
+              alert('신청 중 오류가 발생했습니다.');
+              console.error(error);
+            }
+          }
+        });
+      }
+
+      // 은행 선택 직접입력 처리
+      const bankSelect = document.getElementById('bankSelect');
+      const directBankInput = document.getElementById('directBankInput');
+
+      if (bankSelect && directBankInput) {
+        bankSelect.addEventListener('change', function () {
+          if (this.value === 'direct') {
+            directBankInput.style.display = 'block';
+            directBankInput.required = true;
+            this.required = false;
+          } else {
+            directBankInput.style.display = 'none';
+            directBankInput.required = false;
+            this.required = true;
+          }
+        });
+      }
+
+      // 터치 제스처 처리 개선
+      const mainContent = document.querySelector('.main-content');
+      const couponGrid = document.querySelector('.coupon-grid');
+
+      let startX, startY;
+      let lastTouchEnd = 0;
+
+      // 더블탭 줌 방지
+      document.addEventListener('touchend', function (e) {
+        const now = Date.now();
+        if (now - lastTouchEnd <= 300) {
+          e.preventDefault();
+        }
+        lastTouchEnd = now;
+      }, false);
+
+      // 핀치 줌 방지
+      document.addEventListener('touchmove', function (e) {
+        if (e.touches.length > 1) {
+          e.preventDefault();
+        }
+      }, { passive: false });
+
+      // 쿠폰 그리드 가로 스크롤
+      if (couponGrid) {
+        couponGrid.addEventListener('touchstart', function (e) {
+          startX = e.touches[0].clientX;
+          startY = e.touches[0].clientY;
+        }, { passive: true });
+
+        couponGrid.addEventListener('touchmove', function (e) {
+          if (!startX || !startY) return;
+
+          const deltaX = e.touches[0].clientX - startX;
+          const deltaY = e.touches[0].clientY - startY;
+
+          // 수평 스크롤이 수직 스크롤보다 크면
+          if (Math.abs(deltaX) > Math.abs(deltaY)) {
+            e.preventDefault();
+            this.scrollLeft -= deltaX;
+          }
+        }, { passive: false });
+
+        couponGrid.addEventListener('touchend', function () {
+          startX = null;
+          startY = null;
+        }, { passive: true });
+      }
+
+      // 폼 입력 필드 터치 최적화
+      const formInputs = document.querySelectorAll('input, textarea');
+      formInputs.forEach(input => {
+        input.addEventListener('touchstart', function (e) {
+          e.stopPropagation();
+        }, { passive: true });
+      });
+    });
+  </script>
+
+  <!-- Firebase 초기화 스크립트 추가 -->
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyAWrSUmZfofRnofVx5LfCPmPoVtTUuy3A8",
+      authDomain: "coupon-world-370d1.firebaseapp.com",
+      databaseURL: "https://coupon-world-370d1-default-rtdb.firebaseio.com",
+      projectId: "coupon-world-370d1",
+      storageBucket: "coupon-world-370d1.firebasestorage.app",
+      messagingSenderId: "631643024069",
+      appId: "1:631643024069:web:f35111184e686bc980deac",
+      measurementId: "G-1CJ2Z8D8NX"
+    };
+
+    // Firebase 초기화
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+  </script>
+</body>
+
+</html>
