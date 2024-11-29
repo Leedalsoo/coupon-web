@@ -442,6 +442,162 @@
     #verifyCodeBtn:hover {
       background-color: #218838;
     }
+
+    /* 모달 스타일 */
+    .modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1001;
+    }
+
+    .modal-content {
+      background: white;
+      padding: 2rem;
+      border-radius: 8px;
+      max-width: 90%;
+      width: 500px;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .modal-buttons {
+      display: flex;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .submit-button.secondary {
+      background-color: #6c757d;
+    }
+
+    #applicationDetails {
+      margin-top: 1rem;
+      padding: 1rem;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+
+    .application-status {
+      padding: 0.5rem;
+      border-radius: 4px;
+      margin-bottom: 1rem;
+      text-align: center;
+      font-weight: bold;
+    }
+
+    .status-pending {
+      background-color: #ffeeba;
+      color: #856404;
+    }
+
+    .status-processing {
+      background-color: #b8daff;
+      color: #004085;
+    }
+
+    .status-completed {
+      background-color: #c3e6cb;
+      color: #155724;
+    }
+
+    /* 취소 확인 모달 추가 */
+    .modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1001;
+    }
+
+    .modal-content {
+      background: white;
+      padding: 2rem;
+      border-radius: 8px;
+      max-width: 90%;
+      width: 500px;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .modal-buttons {
+      display: flex;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .submit-button.secondary {
+      background-color: #6c757d;
+    }
+
+    #applicationDetails {
+      margin-top: 1rem;
+      padding: 1rem;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+
+    .application-status {
+      padding: 0.5rem;
+      border-radius: 4px;
+      margin-bottom: 1rem;
+      text-align: center;
+      font-weight: bold;
+    }
+
+    .status-pending {
+      background-color: #ffeeba;
+      color: #856404;
+    }
+
+    .status-processing {
+      background-color: #b8daff;
+      color: #004085;
+    }
+
+    .status-completed {
+      background-color: #c3e6cb;
+      color: #155724;
+    }
+
+    /* 처리중 표시 오버레이 추가 */
+    .loading-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(255, 255, 255, 0.7);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1002;
+    }
+
+    .loading-spinner {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #3498db;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
   </style>
   <!-- Firebase SDK 추가 (head 태그 안에) -->
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
@@ -460,6 +616,7 @@
     <button class="nav-button" data-section="purchase">쿠폰사용</button>
     <button class="nav-button" data-section="refund">환불신청</button>
     <button class="nav-button" data-section="inquiry">문의</button>
+    <button class="nav-button" data-section="applications">신청확인&취소</button>
   </nav>
 
   <main class="main-content">
@@ -593,7 +750,7 @@
           <label class="form-label">문의 유형</label>
           <select class="form-input">
             <option>문 유형을 선택하세</option>
-            <option>쿠폰 사용</option>
+            <option>쿠폰 용</option>
             <option>주문/결제</option>
             <option>배송</option>
             <option>기타</option>
@@ -610,9 +767,98 @@
         <button class="submit-button">문의하기</button>
       </div>
     </section>
+
+    <!-- 신청내역 섹션 -->
+    <section id="applications" class="content-section">
+      <div class="form-container">
+        <h2 class="section-title">신청 내역 조회 & 취소</h2>
+        <div class="form-group">
+          <input type="text" class="form-input" id="searchNumber" placeholder="신청번호 또는 신용카드승인번호를 입력하세요">
+          <button class="submit-button" id="searchApplication">조회하기</button>
+        </div>
+        <div id="applicationDetails" style="display: none;">
+          <!-- 조회 결과가 여기에 표시됩니다 -->
+        </div>
+      </div>
+    </section>
+
+    <!-- 신청 확인 모달 -->
+    <div id="confirmationModal" class="modal" style="display: none;">
+      <div class="modal-content">
+        <h3>신청 내용 확인</h3>
+        <div id="modalContent"></div>
+        <div class="modal-buttons">
+          <button id="confirmApplication" class="submit-button">확인</button>
+          <button id="modifyApplication" class="submit-button secondary">수정하기</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 취소 확인 모달 추가 -->
+    <div id="cancelModal" class="modal" style="display: none;">
+      <div class="modal-content">
+        <h3>환불신청 취소</h3>
+        <div class="cancel-details">
+          <p><strong>신청번호:</strong> <span id="modalApplicationNumber"></span></p>
+          <p><strong>신청인:</strong> <span id="modalUserName"></span></p>
+          <p><strong>환불금액:</strong> <span id="modalRefundAmount"></span></p>
+        </div>
+        <p class="warning-text">정말로 환불신청을 취소하시겠습니까?</p>
+        <div class="modal-buttons">
+          <button class="submit-button" onclick="processCancelApplication()">확인</button>
+          <button class="cancel-button" onclick="closeCancelModal()">취소</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 처리중 표시 오버레이 추가 -->
+    <div id="loadingOverlay" class="loading-overlay" style="display: none;">
+      <div class="loading-spinner"></div>
+      <p>처리중입니다...</p>
+    </div>
   </main>
 
   <script>
+    // 전역 함수로 이동
+    function cancelApplication(key) {
+      // 해당 신청 데이터 가져오기
+      const refundRef = firebase.database().ref(`applications/refund/${key}`);
+      refundRef.once('value').then((snapshot) => {
+        const data = snapshot.val();
+        
+        // 취소 확인 모달 표시
+        if (confirm(`아래 환불신청을 취소하시겠습니까?\n\n` + 
+                    `신청번호: ${data.applicationNumber}\n` +
+                    `신청자명: ${data.userName}\n` +
+                    `환불금액: ${data.refundAmount.toLocaleString()}원`)) {
+          
+          // 취소 처리 진행
+          processCancelRefund(key, data);
+        }
+      });
+    }
+
+    async function processCancelRefund(key, refundData) {
+      try {
+        // 취소 이력 저장
+        await firebase.database().ref('applications/cancelled').push({
+          ...refundData,
+          cancelledAt: new Date().toISOString(),
+          cancelledBy: 'user'
+        });
+
+        // 기존 데이터 삭제
+        await firebase.database().ref(`applications/refund/${key}`).remove();
+        
+        alert('환불신청이 취소되었습니다.');
+        document.getElementById('applicationDetails').style.display = 'none';
+        document.getElementById('searchNumber').value = '';
+      } catch (error) {
+        console.error('취소 처리 중 오류 발생:', error);
+        alert('취소 처리 중 오류가 발생했습니다.');
+      }
+    }
+
     document.addEventListener('DOMContentLoaded', function () {
       const navButtons = document.querySelectorAll('.nav-button');
       const sections = document.querySelectorAll('.content-section');
@@ -661,15 +907,63 @@
         });
       }
 
-      // 환불 신청 폼 처리
+      // 신청번호 생성 함수
+      async function generateApplicationNumber() {
+        const timestamp = Date.now();
+        const random = Math.random().toString(36).substr(2, 6).toUpperCase();
+        const prefix = 'RF';
+        const proposedNumber = `${prefix}${timestamp}${random}`;
+        
+        // Firebase에서 중복 체크
+        const snapshot = await firebase.database()
+          .ref('applications/refund')
+          .orderByChild('applicationNumber')
+          .equalTo(proposedNumber)
+          .once('value');
+        
+        // 중복이 있으면 재귀적으로 다시 생성
+        if (snapshot.exists()) {
+          return generateApplicationNumber();
+        }
+        
+        return proposedNumber;
+      }
+
+      // 모달 관련 함수들 추가
+      function showConfirmationModal(data) {
+        const modal = document.getElementById('confirmationModal');
+        const content = document.getElementById('modalContent');
+        
+        content.innerHTML = `
+          <p><strong>신청번호:</strong> ${data.applicationNumber}</p>
+          <p><strong>신청자명:</strong> ${data.userName}</p>
+          <p><strong>이메일:</strong> ${data.userEmail}</p>
+          <p><strong>전화번호:</strong> ${data.userPhone}</p>
+          <p><strong>환불금액:</strong> ${data.refundAmount.toLocaleString()}원</p>
+          <p><strong>은행정보:</strong> ${data.bankInfo.bankName} ${data.bankInfo.accountNumber}</p>
+          <p><strong>예금주:</strong> ${data.bankInfo.accountHolder}</p>
+        `;
+        
+        modal.style.display = 'flex';
+      }
+
+      function hideConfirmationModal() {
+        document.getElementById('confirmationModal').style.display = 'none';
+      }
+
+      // 환불 신청 폼 처리 수정
       const refundForm = document.getElementById('refundForm');
       if (refundForm) {
         refundForm.addEventListener('submit', async function (e) {
           e.preventDefault();
 
           try {
+            // 중복 없는 신청번호 생성
+            const applicationNumber = await generateApplicationNumber();
+            
             // 폼 데이터 수집
             const formData = {
+              applicationNumber,
               id: Date.now(),
               userName: this.elements.refundName.value,
               userEmail: this.elements.refundEmail.value,
@@ -686,12 +980,28 @@
               status: 'pending',
               timestamp: new Date().toISOString()
             };
+            
+            // 데달에 신청 내용 표시
+            showConfirmationModal(formData);
 
-            // 데이터베이스에 저장
-            await firebase.database().ref('applications/refund').push(formData);
+            // 확인 버튼 클릭 시 처리
+            document.getElementById('confirmApplication').onclick = async () => {
+              try {
+                // Firebase에 저장
+                await firebase.database().ref('applications/refund').push(formData);
+                hideConfirmationModal();
+                alert(`신청이 완료되었습니다. 신청번호: ${applicationNumber}`);
+                this.reset();
+              } catch (error) {
+                console.error('데이터 저장 중 오류 발생:', error);
+                alert('신청 처리 중 오류가 발생했습니다. 다시 시도해주세요.');
+              }
+            };
 
-            alert('환불 신청이 정상적으로 접수되었습니다.');
-            this.reset();
+            // 수정 버튼 클릭 시 처리
+            document.getElementById('modifyApplication').onclick = () => {
+              hideConfirmationModal();
+            };
 
           } catch (error) {
             console.error('환불 신청 처리 중 오류 발생:', error);
@@ -774,6 +1084,87 @@
           e.stopPropagation();
         }, { passive: true });
       });
+
+      // 신청 내역 조회 처리 수정
+      const searchApplication = document.getElementById('searchApplication');
+      if (searchApplication) {
+        searchApplication.addEventListener('click', async () => {
+          const searchNumber = document.getElementById('searchNumber').value;
+          if (!searchNumber) {
+            alert('신청번호 또는 신용카드승인번호를 입력해주세요.');
+            return;
+          }
+
+          try {
+            const refundRef = firebase.database().ref('applications/refund');
+            
+            // 신청번호로 검색
+            let snapshot = await refundRef
+              .orderByChild('applicationNumber')
+              .equalTo(searchNumber)
+              .once('value');
+            
+            // 신청번호로 찾지 못한 경우 신용카드승인번호로 검색
+            if (!snapshot.exists()) {
+              snapshot = await refundRef
+                .orderByChild('cardApproval')
+                .equalTo(searchNumber)
+                .once('value');
+            }
+
+            const data = snapshot.val();
+            if (data) {
+              const application = Object.values(data)[0];
+              const applicationKey = Object.keys(data)[0];
+              
+              // 조회 결과 표시
+              const details = document.getElementById('applicationDetails');
+              details.style.display = 'block';
+              details.innerHTML = `
+                <div class="result-container">
+                  <h3>신청 내역</h3>
+                  <p><strong>신청번호:</strong> ${application.applicationNumber}</p>
+                  <p><strong>신청일시:</strong> ${new Date(application.timestamp).toLocaleString()}</p>
+                  <p><strong>신청인:</strong> ${application.userName}</p>
+                  <p><strong>이메일:</strong> ${application.userEmail}</p>
+                  <p><strong>전화번호:</strong> ${application.userPhone}</p>
+                  <p><strong>승인번호:</strong> ${application.cardApproval}</p>
+                  <p><strong>환불금액:</strong> ${application.refundAmount.toLocaleString()}원</p>
+                  <p><strong>환불계좌:</strong> ${application.bankInfo.bankName} ${application.bankInfo.accountNumber}</p>
+                  <p><strong>처리상태:</strong> ${getStatusText(application.status)}</p>
+                  ${application.status === 'pending' ? 
+                    `<button class="cancel-button" onclick="cancelApplication('${applicationKey}')">신청취소</button>` 
+                    : ''}
+                </div>
+              `;
+            } else {
+              alert('해당 번호로 조회된 신청 내역이 없습니다.');
+            }
+          } catch (error) {
+            console.error('조회 중 오류 발생:', error);
+            alert('조회 중 오류가 발생했습니다.');
+          }
+        });
+      }
+
+      // 상태 텍스트 변환 함수
+      function getStatusText(status) {
+        const statusMap = {
+          pending: '접수완료',
+          processing: '처리중',
+          completed: '처리완료'
+        };
+        return statusMap[status] || status;
+      }
+
+      // 금액 입력 시 자동 콤마 포맷팅
+      function formatAmount(input) {
+        let value = input.value.replace(/[^\d]/g, '');
+        if (value) {
+          value = parseInt(value).toLocaleString();
+          input.value = value;
+        }
+      }
     });
   </script>
 
