@@ -239,7 +239,8 @@
       }
 
       .main-content {
-        margin-top: 140px; /* 네비게이션 메뉴 높이를 고려하여 조정 */
+        margin-top: 110px; /* 상단 여백 조정 */
+        padding-top: 1.5rem; /* 상단 패딩 추가 */
       }
 
       .form-container {
@@ -252,6 +253,11 @@
 
       .form-label {
         font-size: 0.9rem;
+      }
+
+      /* 홈 섹션에 대한 특별한 여백 처리 추가 */
+      #home.content-section {
+        margin-top: 20px; /* 홈 섹션에만 추가 여백 적용 */
       }
     }
 
@@ -671,7 +677,7 @@
             <label class="form-label">사용 금액 <span class="required">*</span></label>
             <input type="number" class="form-input" name="amount" required min="1000" placeholder="희망 사용 금액을 입력하세요">
           </div>
-          <button type="submit" class="submit-button">���용 신청하기</button>
+          <button type="submit" class="submit-button">용 신청하기</button>
         </form>
       </div>
     </section>
