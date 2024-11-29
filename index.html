@@ -38,22 +38,29 @@
     .nav-menu {
       display: flex;
       justify-content: space-around;
-      padding: 1rem;
+      padding: 0.8rem;
       background-color: white;
       position: fixed;
       top: 60px;
       width: 100%;
       border-bottom: 1px solid #eee;
       z-index: 999;
+      flex-wrap: wrap;
+      gap: 0.5rem;
     }
 
     .nav-button {
-      padding: 0.5rem 1rem;
+      flex: 1 1 auto;
+      min-width: calc(33.333% - 0.5rem); /* 한 줄에 3개씩 배치 */
+      padding: 0.7rem 0.5rem;
       border: none;
       background: none;
       color: #666;
       cursor: pointer;
       transition: color 0.3s;
+      font-size: 0.9rem;
+      text-align: center;
+      white-space: nowrap;
     }
 
     .nav-button.active {
@@ -221,16 +228,18 @@
       }
 
       .nav-menu {
-        padding: 0.8rem 0.4rem;
-        flex-wrap: wrap;
-        justify-content: space-between;
+        padding: 0.5rem;
+        top: 50px; /* 헤더 높이에 맞춰 조정 */
       }
 
       .nav-button {
-        font-size: 0.9rem;
-        padding: 0.5rem;
-        flex: 1 1 auto;
-        margin: 0.2rem;
+        min-width: calc(50% - 0.5rem); /* 한 줄에 2개씩 배치 */
+        padding: 0.6rem 0.4rem;
+        font-size: 0.85rem;
+      }
+
+      .main-content {
+        margin-top: 140px; /* 네비게이션 메뉴 높이를 고려하여 조정 */
       }
 
       .form-container {
@@ -662,7 +671,7 @@
             <label class="form-label">사용 금액 <span class="required">*</span></label>
             <input type="number" class="form-input" name="amount" required min="1000" placeholder="희망 사용 금액을 입력하세요">
           </div>
-          <button type="submit" class="submit-button">사용 신청하기</button>
+          <button type="submit" class="submit-button">���용 신청하기</button>
         </form>
       </div>
     </section>
@@ -764,7 +773,7 @@
           <label class="form-label">문의 내용</label>
           <textarea class="form-textarea" placeholder="문의하실 내용을 상세히 적어주세요"></textarea>
         </div>
-        <button class="submit-button">문의하기</button>
+        <button class="submit-button">문의하</button>
       </div>
     </section>
 
