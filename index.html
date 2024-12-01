@@ -176,7 +176,7 @@
       }
     }
 
-    /* 구매하기 버튼 스타일 추가 */
+    /* 구매하 버튼 스타일 추가 */
     .coupon-card .submit-btn.warm {
       display: inline-block;
       text-decoration: none;
@@ -632,6 +632,41 @@
       0% { transform: rotate(0deg); }
       100% { transform: rotate(360deg); }
     }
+
+    /* 전자서명 패드 스타일 */
+    .signature-pad-container {
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      margin-bottom: 1rem;
+      background: #fff;
+    }
+
+    #signaturePad {
+      width: 100%;
+      height: 200px;
+      background: #fff;
+    }
+
+    @media (max-width: 480px) {
+      #signaturePad {
+        height: 150px;
+      }
+    }
+
+    .signature-pad-buttons {
+      padding: 0.5rem;
+      text-align: right;
+      border-top: 1px solid #eee;
+    }
+
+    .clear-btn {
+      padding: 0.3rem 0.8rem;
+      background: #6c757d;
+      color: white;
+      border: none;
+      border-radius: 3px;
+      cursor: pointer;
+    }
   </style>
   <!-- Firebase SDK 추가 (head 태그 안에) -->
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
@@ -696,7 +731,7 @@
             <label class="form-label">사용 금액 <span class="required">*</span></label>
             <input type="number" class="form-input" name="amount" required min="1000" placeholder="희망 사용 금액을 입력하세요">
           </div>
-          <button type="submit" class="submit-button">쿠폰 사용 신청하기</button>
+          <button type="submit" class="submit-button">용 신청하기</button>
         </form>
       </div>
     </section>
@@ -770,6 +805,15 @@
             </div>
 
             <input type="text" class="form-input" name="accountNumber" required placeholder="계좌번호">
+          </div>
+          <div class="form-group">
+            <label class="form-label">전자서명 <span class="required">*</span></label>
+            <div class="signature-pad-container">
+              <canvas id="signaturePad"></canvas>
+              <div class="signature-pad-buttons">
+                <button type="button" class="clear-btn" onclick="clearSignature()">다시하기</button>
+              </div>
+            </div>
           </div>
           <button type="submit" class="submit-button" id="submitRefundBtn">환불 신청하기</button>
         </form>
@@ -1227,6 +1271,71 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
     const auth = firebase.auth();
+  </script>
+
+  <!-- 전자서명 패드 초기화 -->
+  <script>
+    let signaturePad;
+    document.addEventListener('DOMContentLoaded', function() {
+      const canvas = document.getElementById('signaturePad');
+      signaturePad = new SignaturePad(canvas, {
+        backgroundColor: 'rgb(255, 255, 255)',
+        penColor: 'rgb(0, 0, 0)'
+      });
+
+      // 캔버스 크기 조정
+      function resizeCanvas() {
+        const ratio = Math.max(window.devicePixelRatio || 1, 1);
+        canvas.width = canvas.offsetWidth * ratio;
+        canvas.height = canvas.offsetHeight * ratio;
+        canvas.getContext("2d").scale(ratio, ratio);
+        signaturePad.clear();
+      }
+
+      window.addEventListener("resize", resizeCanvas);
+      resizeCanvas();
+    });
+
+    // 서명 초기화
+    function clearSignature() {
+      signaturePad.clear();
+    }
+
+    // 환불신청 폼 제출 시 서명 데이터 처리
+    document.getElementById('refundForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      if (signaturePad.isEmpty()) {
+        alert('전자서명을 해주세요.');
+        return;
+      }
+
+      const signatureData = signaturePad.toDataURL();
+      const signatureRef = firebase.storage().ref().child(`signatures/${Date.now()}.png`);
+      
+      try {
+        // 서명 이미지를 Firebase Storage에 업로드
+        const snapshot = await signatureRef.putString(signatureData, 'data_url');
+        const signatureUrl = await snapshot.ref.getDownloadURL();
+        
+        // 기존 폼 데이터와 함께 서명 URL 저장
+        const formData = {
+          // ... 기존 폼 데이터 ...
+          signatureUrl: signatureUrl,
+          signatureTimestamp: Date.now()
+        };
+        
+        // Firebase Database에 저장
+        await firebase.database().ref('applications/refund').push(formData);
+        
+        alert('환불신청이 완료되었습니다.');
+        this.reset();
+        signaturePad.clear();
+      } catch (error) {
+        console.error('환불신청 처리 중 오류:', error);
+        alert('환불신청 처리 중 오류가 발생했습니다.');
+      }
+    });
   </script>
 </body>
 
