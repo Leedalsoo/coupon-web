@@ -4,7 +4,7 @@
 
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
   <title> 쿠폰 세상</title>
   <style>
 
@@ -1139,7 +1139,7 @@ html, body {
       // 핀치 줌 방지
       document.addEventListener('touchmove', function (e) {
         if (e.touches.length > 1) {
-          e.preventDefault();
+          // e.preventDefault(); 이걸 한번 수정해 볼게.
         }
       }, { passive: true }); /*여기서 핀치줌을 막고 있었어.*/
 
