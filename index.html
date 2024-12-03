@@ -1133,7 +1133,7 @@
         if (e.touches.length > 1) {
           e.preventDefault();
         }
-      }, { passive: false });
+      }, { passive: true }); /*여기서 핀치줌을 맞고 있었어.*/
 
       // 쿠폰 그리드 가로 스크롤
       if (couponGrid) {
