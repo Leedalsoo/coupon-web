@@ -7,6 +7,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title> 쿠폰 세상</title>
   <style>
+
+    /* Pinch Zoom 활성화 */
+html, body {
+  touch-action: pinch-zoom;
+  -ms-touch-action: pinch-zoom;
+  -webkit-user-select: auto;
+  user-select: auto;
+}
     /* 이전 스타일 유지 */
     * {
       margin: 0;
@@ -1133,7 +1141,7 @@
         if (e.touches.length > 1) {
           e.preventDefault();
         }
-      }, { passive: true }); /*여기서 핀치줌을 맞고 있었어.*/
+      }, { passive: true }); /*여기서 핀치줌을 막고 있었어.*/
 
       // 쿠폰 그리드 가로 스크롤
       if (couponGrid) {
