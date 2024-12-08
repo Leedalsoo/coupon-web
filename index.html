@@ -51,8 +51,9 @@
 
     .nav-button {
       flex: 0 1 auto;
-      min-width: auto /*calc(33.333% - 0.5rem); 한 줄에 3개씩 배치 */
-      padding: 0.6rem 0.4rem;
+      min-width: auto
+        /*calc(33.333% - 0.5rem); 한 줄에 3개씩 배치 */
+        padding: 0.6rem 0.4rem;
       border: none;
       background: #F8F9FA;
       color: #666;
@@ -239,18 +240,22 @@
 
       .nav-menu {
         padding: 0.5rem;
-        top: 50px; /* 헤더 높이에 맞춰 조정 */
+        top: 50px;
+        /* 헤더 높이에 맞춰 조정 */
       }
 
       .nav-button {
-        min-width: calc(33.333% - 0.5rem); /* 한 줄에 3개씩 배치 */
+        min-width: calc(33.333% - 0.5rem);
+        /* 한 줄에 3개씩 배치 */
         padding: 0.6rem 0.4rem;
         font-size: 0.85rem;
       }
 
       .main-content {
-        margin-top: 175px; /* 상단 여백 조정 */
-        padding-top: 1.5rem; /* 상단 패딩 추가 */
+        margin-top: 175px;
+        /* 상단 여백 조정 */
+        padding-top: 1.5rem;
+        /* 상단 패딩 추가 */
       }
 
       .form-container {
@@ -267,19 +272,22 @@
 
       /* 홈 섹션에 대한 특별한 여백 처리 추가 */
       #home.content-section {
-        margin-top: 20px; /* 홈 섹션에만 추가 여백 적용 */
+        margin-top: 20px;
+        /* 홈 섹션에만 추가 여백 적용 */
       }
     }
 
     /* 태블릿 화면 최적화 */
     @media (min-width: 481px) and (max-width: 1024px) {
       .main-content {
-        margin-top: 120px; /* 헤더와 네비게이션 메뉴의 총 높이를 고려하여 조정 */
+        margin-top: 120px;
+        /* 헤더와 네비게이션 메뉴의 총 높이를 고려하여 조정 */
         padding: 1rem;
       }
 
       .nav-menu {
-        top: 60px; /* 헤더 높이에 맞춰 조정 */
+        top: 60px;
+        /* 헤더 높이에 맞춰 조정 */
       }
 
       .form-container {
@@ -629,8 +637,13 @@
     }
 
     @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(360deg);
+      }
     }
 
     #signaturePad {
@@ -739,13 +752,8 @@
           </div>
           <div class="form-group">
             <label class="form-label">환불금액 <span class="required">*</span></label>
-            <input type="text" 
-                   class="form-input" 
-                   name="refundAmount" 
-                   required 
-                   placeholder="환불금액을 입력하세요"
-                   oninput="formatAmount(this)"
-                   pattern="\d*">
+            <input type="text" class="form-input" name="refundAmount" required placeholder="환불금액을 입력하세요"
+              oninput="formatAmount(this)" pattern="\d*">
           </div>
           <div class="form-group">
             <label class="form-label">환불 계좌 정보 <span class="required">*</span></label>
@@ -894,13 +902,13 @@
       const refundRef = firebase.database().ref(`applications/refund/${key}`);
       refundRef.once('value').then((snapshot) => {
         const data = snapshot.val();
-        
+
         // 취소 확인 모달 표시
-        if (confirm(`아래 환불신청을 취소하시겠습니까?\n\n` + 
-                    `신청번호: ${data.applicationNumber}\n` +
-                    `신청자명: ${data.userName}\n` +
-                    `환불금액: ${data.refundAmount.toLocaleString()}원`)) {
-          
+        if (confirm(`아래 환불신청을 취소하시겠습니까?\n\n` +
+          `신청번호: ${data.applicationNumber}\n` +
+          `신청자명: ${data.userName}\n` +
+          `환불금액: ${data.refundAmount.toLocaleString()}원`)) {
+
           // 취소 처리 진행
           processCancelRefund(key, data);
         }
@@ -911,7 +919,7 @@
       try {
         const applicationDate = new Date(refundData.timestamp).setHours(0, 0, 0, 0);
         const today = new Date().setHours(0, 0, 0, 0);
-        
+
         if (applicationDate === today) {
           // 신청 당일에는 취소 가능
           // 취소 상태로 업데이트
@@ -920,7 +928,7 @@
             cancelledAt: new Date().toISOString(),
             cancelledBy: 'user'
           });
-          
+
           alert('환불신청이 취소되었습니다.');
           document.getElementById('applicationDetails').style.display = 'none';
           document.getElementById('searchNumber').value = '';
@@ -988,19 +996,19 @@
         const random = Math.random().toString(36).substr(2, 6).toUpperCase();
         const prefix = 'RF';
         const proposedNumber = `${prefix}${timestamp}${random}`;
-        
+
         // Firebase에서 중복 체크
         const snapshot = await firebase.database()
           .ref('applications/refund')
           .orderByChild('applicationNumber')
           .equalTo(proposedNumber)
           .once('value');
-        
+
         // 중복이 있으면 재귀적으로 다시 생성
         if (snapshot.exists()) {
           return generateApplicationNumber();
         }
-        
+
         return proposedNumber;
       }
 
@@ -1008,19 +1016,43 @@
       function showConfirmationModal(data) {
         const modal = document.getElementById('confirmationModal');
         const content = document.getElementById('modalContent');
-        
+
         content.innerHTML = `
           <p><strong>신청번호:</strong> ${data.applicationNumber}</p>
           <p><strong>신청자명:</strong> ${data.userName}</p>
           <p><strong>이메일:</strong> ${data.userEmail}</p>
           <p><strong>전화번호:</strong> ${data.userPhone}</p>
           <p><strong>환불금액:</strong> ${data.refundAmount.toLocaleString()}원</p>
-          <p><strong>은행정보:</strong> ${data.bankInfo.bankName} ${data.bankInfo.accountNumber}</p>
-          <p><strong>예금주:</strong> ${data.bankInfo.accountHolder}</p>
+          <p><strong>은행정보:</strong> ${getBankNameKorean(data.bankInfo.bankName)} ${data.bankInfo.accountNumber} (${data.bankInfo.accountHolder})</p>
           <img src="${data.signature}" alt="전자서명" style="max-width: 100%; margin-top: 10px;">
         `;
-        
+
         modal.style.display = 'flex';
+      }
+
+      // 은행명 한글 변환 함수
+      function getBankNameKorean(engName) {
+        const bankNames = {
+          'kb': 'KB국민은행',
+          'shinhan': '신한은행',
+          'woori': '우리은행',
+          'hana': '하나은행',
+          'nh': '농협은행',
+          'ibk': '기업은행',
+          'kakao': '카카오뱅크',
+          'toss': '토스뱅크',
+          'kbank': '케이뱅크',
+          'sc': 'SC제일은행',
+          'city': '씨티은행',
+          'dgb': '대구은행',
+          'bnk': '부산은행',
+          'kjb': '광주은행',
+          'jbb': '전북은행',
+          'knb': '경남은행',
+          'kdb': '산업은행',
+          'post': '우체국'
+        };
+        return bankNames[engName.toLowerCase()] || engName;
       }
 
       function hideConfirmationModal() {
@@ -1030,18 +1062,18 @@
       // 환불 신청 폼 처리 수정
       const refundForm = document.getElementById('refundForm');
       if (refundForm) {
-        refundForm.addEventListener('submit', async function(e) {
+        refundForm.addEventListener('submit', async function (e) {
           e.preventDefault();
-          
+
           // 전자서명 모달 표시
           const signatureModal = document.getElementById('signatureModal');
           signatureModal.style.display = 'flex';
-          
+
           // 전자서명 패드 초기화
           const canvas = document.getElementById('signaturePad');
           canvas.width = canvas.offsetWidth;
           canvas.height = canvas.offsetHeight;
-          
+
           signaturePad = new SignaturePad(canvas, {
             backgroundColor: 'rgb(255, 255, 255)',
             penColor: 'rgb(0, 0, 0)'
@@ -1061,7 +1093,7 @@
             try {
               // 신청번호 생성
               const applicationNumber = await generateApplicationNumber();
-              
+
               // 폼 데이터 수집
               const formData = {
                 applicationNumber,
@@ -1072,8 +1104,8 @@
                 cardApproval: this.elements.cardApproval.value,
                 refundAmount: parseInt(this.elements.refundAmount.value.replace(/,/g, '')),
                 bankInfo: {
-                  bankName: this.elements.bankName.value === 'direct' ? 
-                    this.elements.directBankName.value : 
+                  bankName: this.elements.bankName.value === 'direct' ?
+                    this.elements.directBankName.value :
                     this.elements.bankName.value,
                   accountNumber: this.elements.accountNumber.value,
                   accountHolder: this.elements.accountHolder.value
@@ -1207,13 +1239,13 @@
 
           try {
             const refundRef = firebase.database().ref('applications/refund');
-            
+
             // 신청번호로 검색
             let snapshot = await refundRef
               .orderByChild('applicationNumber')
               .equalTo(searchNumber)
               .once('value');
-            
+
             // 신청번호로 찾지 못한 경우 신용카드승인번호로 검색
             if (!snapshot.exists()) {
               snapshot = await refundRef
@@ -1226,7 +1258,7 @@
             if (data) {
               const application = Object.values(data)[0];
               const applicationKey = Object.keys(data)[0];
-              
+
               // 조회 결과 표시
               const details = document.getElementById('applicationDetails');
               details.style.display = 'block';
@@ -1244,9 +1276,9 @@
                   <p><strong>처리상태:</strong> ${getStatusText(application.status)}</p>
                   <p><strong>전자서명:</strong></p>
                   <img src="${application.signature}" alt="전자서명" style="max-width: 100%; margin-top: 10px;">
-                  ${application.status === 'pending' ? 
-                    `<button class="cancel-button" onclick="cancelApplication('${applicationKey}')">신청취소</button>` 
-                    : ''}
+                  ${application.status === 'pending' ?
+                  `<button class="cancel-button" onclick="cancelApplication('${applicationKey}')">신청취소</button>`
+                  : ''}
                 </div>
               `;
             } else {
@@ -1279,6 +1311,11 @@
           input.value = value;
         }
       }
+
+      // 수정하기 버튼 클릭 시 처리
+      document.getElementById('modifyApplication').addEventListener('click', function () {
+        document.getElementById('confirmationModal').style.display = 'none';
+      });
     });
   </script>
 
